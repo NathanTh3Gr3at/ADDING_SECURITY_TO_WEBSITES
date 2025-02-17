@@ -3,7 +3,8 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const mongodbStore = require('connect-mongodb-session');
-
+//preferably use Double CSRF as csrf is depreceated
+const csrf=require('csurf')
 const db = require('./data/database');
 const demoRoutes = require('./routes/demo');
 
@@ -13,7 +14,7 @@ const app = express();
 
 const sessionStore = new MongoDBStore({
   uri: 'mongodb://localhost:27017',
-  databaseName: 'auth-demo',
+  databaseName: 'security',
   collection: 'sessions'
 });
 
@@ -32,6 +33,7 @@ app.use(session({
     maxAge: 2 * 24 * 60 * 60 * 1000
   }
 }));
+app.use(csrf())
 
 app.use(async function(req, res, next) {
   const user = req.session.user;
